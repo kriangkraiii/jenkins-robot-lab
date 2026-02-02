@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        RESULTS_DIR = "results"
+    }
+
+    stages {
+        stage('Cleanup') {
+            steps {
+                echo "Cleaning up old results..."
+                // ลบโฟลเดอร์ผลลัพธ์เก่าถ้ามี
+                sh "rm -rf ${RESULTS_DIR}"
+            }
+        }
+
+        stage('Build Check') {
+            steps {
+                echo "Verifying Environment..."
+                sh 'python3 --version'
+                sh 'robot --version'
+                sh 'chromium --version'
+            }
+        }
+
+        stage('Run Robot Tests') {
+            steps {
+                // รันคำสั่ง Robot โดยระบุ output directory
+                sh "robot -d ${RESULTS_DIR} tests/"
+            }
+        }
+    }
+
+    post {
+        always {
+            // เก็บผลลัพธ์และแสดง Report ผ่าน Robot Framework Plugin
+            step([$class: 'RobotPublisher',
+                outputPath: "${RESULTS_DIR}",
+                outputFileName: 'output.xml',
+                reportFileName: 'report.html',
+                logFileName: 'log.html',
+                disableReports: false,
+                passThreshold: 80.0,
+                unstableThreshold: 20.0
+            ])
+            archiveArtifacts artifacts: "${RESULTS_DIR}/*.*", allowEmptyArchive: true
+        }
+    }
+}
