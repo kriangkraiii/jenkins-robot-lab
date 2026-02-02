@@ -10,9 +10,16 @@ Open KKU Computing Website
 *** Keywords ***
 Open Browser To Login Page
     ${chrome_options}=    Evaluate    sys.modules['selenium.webdriver'].ChromeOptions()    sys
+    
+    # --- เพิ่มบรรทัดนี้ เพื่อบอกตำแหน่งของ Chromium ใน Docker ---
+    ${chrome_options.binary_location}=    Set Variable    /usr/bin/chromium
+    # -----------------------------------------------------
+
     Call Method    ${chrome_options}    add_argument    --no-sandbox
     Call Method    ${chrome_options}    add_argument    --disable-dev-shm-usage
     Call Method    ${chrome_options}    add_argument    --headless
-    # สำคัญมาก: ต้องระบุ path ของ chrome driver ถ้าไม่ได้อยู่ใน path ปกติ (แต่ใน docker เราลงไว้ใน path แล้ว)
+    
+    # สั่งสร้าง Webdriver โดยใช้ Options ที่ระบุตำแหน่ง Chromium ไว้แล้ว
     Create Webdriver    Chrome    options=${chrome_options}
+    
     Go To    https://computing.kku.ac.th
