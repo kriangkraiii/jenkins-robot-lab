@@ -1,7 +1,7 @@
 # Lab 8: Automated Testing with Jenkins & Robot Framework
 
 This repository contains the source code and configuration for **Lab 8**, focusing on setting up a CI/CD pipeline using **Jenkins** to run automated tests with **Robot Framework** and **Selenium Library** inside a Docker container.
-
+```text
 ## 📂 Project Structure
 ├── Lab8_5/
 │   └── Dockerfile          # Custom Jenkins image with Chromium & Robot Framework installed
